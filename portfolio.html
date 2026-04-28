@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emir Gülçür — Cybersecurity Analyst</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00ff88;
+    --green-dim: #00cc6a;
+    --bg: #030a06;
+    --bg2: #071410;
+    --panel: #0a1f1a;
+    --border: #0d3326;
+    --text: #c8f0d8;
+    --dim: #4a7a5a;
+    --red: #ff4466;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Scanline effect */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,255,136,0.015) 2px,
+      rgba(0,255,136,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* Grid background */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(3,10,6,0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    padding: 14px 0;
+  }
+
+  nav .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .nav-logo {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--green);
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+
+  .nav-links { display: flex; gap: 28px; }
+
+  .nav-links a {
+    color: var(--dim);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .nav-links a:hover { color: var(--green); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-top: 80px;
+  }
+
+  .terminal-window {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+    box-shadow: 0 0 60px rgba(0,255,136,0.08), 0 0 120px rgba(0,255,136,0.04);
+  }
+
+  .terminal-bar {
+    background: #0d2a20;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+
+  .terminal-title {
+    flex: 1;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--dim);
+    letter-spacing: 1px;
+  }
+
+  .terminal-body { padding: 32px 40px 40px; }
+
+  .prompt {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--dim);
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .prompt span { color: var(--green); }
+
+  .hero-name {
+    font-size: clamp(42px, 7vw, 72px);
+    font-weight: 700;
+    color: var(--green);
+    line-height: 1;
+    letter-spacing: -1px;
+    text-shadow: 0 0 40px rgba(0,255,136,0.4);
+    margin: 8px 0;
+  }
+
+  .hero-role {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--text);
+    font-size: 16px;
+    letter-spacing: 3px;
+    margin-bottom: 24px;
+    opacity: 0.8;
+  }
+
+  .hero-desc {
+    color: var(--dim);
+    font-size: 17px;
+    max-width: 580px;
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+
+  .hero-desc strong { color: var(--text); }
+
+  .badges { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 36px; }
+
+  .badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    padding: 5px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--green);
+    letter-spacing: 1px;
+    background: rgba(0,255,136,0.05);
+  }
+
+  .badge.active { border-color: var(--green); background: rgba(0,255,136,0.1); }
+
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+
+  .btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 2px;
+    padding: 12px 24px;
+    border-radius: 3px;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+
+  .btn-primary {
+    background: var(--green);
+    color: var(--bg);
+    border: none;
+    font-weight: 700;
+  }
+
+  .btn-primary:hover {
+    background: white;
+    box-shadow: 0 0 30px rgba(0,255,136,0.4);
+    transform: translateY(-1px);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--green);
+    border: 1px solid var(--green);
+  }
+
+  .btn-outline:hover {
+    background: rgba(0,255,136,0.1);
+    transform: translateY(-1px);
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 10px; height: 18px;
+    background: var(--green);
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* SECTIONS */
+  section { padding: 80px 0; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--green);
+    font-size: 12px;
+    letter-spacing: 3px;
+    opacity: 0.6;
+  }
+
+  .section-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* SKILLS */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  .skill-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 24px;
+    border-radius: 4px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .skill-card:hover {
+    border-color: var(--green);
+    box-shadow: 0 0 20px rgba(0,255,136,0.06);
+  }
+
+  .skill-icon { font-size: 28px; margin-bottom: 12px; }
+
+  .skill-title {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--green);
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+  }
+
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    background: rgba(0,255,136,0.06);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--dim);
+  }
+
+  /* PROJECTS */
+  .projects-list { display: flex; flex-direction: column; gap: 16px; }
+
+  .project-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--green);
+    padding: 28px 32px;
+    border-radius: 0 4px 4px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    transition: box-shadow 0.2s;
+  }
+
+  .project-card:hover { box-shadow: 0 0 30px rgba(0,255,136,0.06); }
+
+  .project-card.wip { border-left-color: #ffaa00; }
+
+  .project-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .project-desc { color: var(--dim); font-size: 15px; margin-bottom: 14px; }
+
+  .project-tech { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .project-status {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .status-done { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid var(--green); }
+  .status-wip { background: rgba(255,170,0,0.1); color: #ffaa00; border: 1px solid #ffaa00; }
+
+  /* CERTS */
+  .certs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+
+  .cert-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 24px;
+    border-radius: 4px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .cert-card:hover { border-color: var(--green); }
+
+  .cert-icon { font-size: 36px; margin-bottom: 12px; }
+
+  .cert-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .cert-org { font-size: 13px; color: var(--dim); margin-bottom: 14px; }
+
+  .cert-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+
+  .cert-progress { background: rgba(255,170,0,0.1); color: #ffaa00; border: 1px solid #ffaa00; }
+  .cert-planned { background: rgba(100,100,100,0.1); color: var(--dim); border: 1px solid var(--border); }
+
+  /* EXPERIENCE */
+  .exp-list { display: flex; flex-direction: column; gap: 0; }
+
+  .exp-item {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 32px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .exp-item:last-child { border-bottom: none; }
+
+  .exp-date {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    padding-top: 4px;
+  }
+
+  .exp-company {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 4px;
+  }
+
+  .exp-role { font-size: 14px; color: var(--dim); margin-bottom: 10px; letter-spacing: 1px; }
+  .exp-desc { color: var(--text); font-size: 15px; opacity: 0.8; }
+
+  /* CONTACT */
+  .contact-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 48px;
+    border-radius: 4px;
+    text-align: center;
+  }
+
+  .contact-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  .contact-sub { color: var(--dim); margin-bottom: 32px; font-size: 16px; }
+
+  .contact-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+  .contact-link {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    padding: 12px 24px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .contact-link:hover { border-color: var(--green); color: var(--green); background: rgba(0,255,136,0.05); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 0;
+    text-align: center;
+  }
+
+  footer p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--dim);
+    letter-spacing: 1px;
+  }
+
+  footer span { color: var(--green); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero .terminal-window { animation: fadeUp 0.8s ease forwards; }
+
+  /* MOBILE */
+  @media (max-width: 600px) {
+    .terminal-body { padding: 24px 20px; }
+    .exp-item { grid-template-columns: 1fr; gap: 8px; }
+    .project-card { flex-direction: column; }
+    .contact-box { padding: 32px 20px; }
+    nav .nav-links { gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="nav-logo">EG://SECURITY</div>
+    <div class="nav-links">
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#certs">Certs</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="terminal-window">
+      <div class="terminal-bar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <div class="terminal-title">~/emir-gulcur — bash</div>
+      </div>
+      <div class="terminal-body">
+        <div class="prompt"><span>emir@kali</span>:~$ whoami</div>
+        <h1 class="hero-name">Emir Gülçür<span class="cursor"></span></h1>
+        <div class="hero-role">// CYBERSECURITY ANALYST — IN TRAINING</div>
+        <p class="hero-desc">
+          Career-changer with a background in <strong>software development</strong> and <strong>business analysis</strong>, now fully focused on cybersecurity. I learn by doing — every concept gets tested in a lab environment.
+          <br><br>
+          🌏 Targeting opportunities in <strong>Canada 🇨🇦</strong> and <strong>Australia 🇦🇺</strong>. Open to remote.
+        </p>
+        <div class="badges">
+          <span class="badge active">🟢 OPEN TO WORK</span>
+          <span class="badge">PENETRATION TESTING</span>
+          <span class="badge">NETWORK SECURITY</span>
+          <span class="badge">TRYHACKME ACTIVE</span>
+          <span class="badge">SECURITY+ IN PROGRESS</span>
+        </div>
+        <div class="cta-row">
+          <a href="#contact" class="btn btn-primary">Get In Touch</a>
+          <a href="#projects" class="btn btn-outline">View Projects</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">01</div>
+      <h2 class="section-title">Technical Skills</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-icon">🔒</div>
+        <div class="skill-title">Security</div>
+        <div class="skill-tags">
+          <span class="tag">Network Security</span>
+          <span class="tag">OSINT</span>
+          <span class="tag">Vulnerability Assessment</span>
+          <span class="tag">Incident Response</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🛠️</div>
+        <div class="skill-title">Tools</div>
+        <div class="skill-tags">
+          <span class="tag">Nmap</span>
+          <span class="tag">Wireshark</span>
+          <span class="tag">Metasploit</span>
+          <span class="tag">Burp Suite</span>
+          <span class="tag">Kali Linux</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">💻</div>
+        <div class="skill-title">Programming</div>
+        <div class="skill-tags">
+          <span class="tag">Python</span>
+          <span class="tag">Bash Scripting</span>
+          <span class="tag">SQL</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🌐</div>
+        <div class="skill-title">Networking</div>
+        <div class="skill-tags">
+          <span class="tag">TCP/IP</span>
+          <span class="tag">DNS</span>
+          <span class="tag">HTTP/S</span>
+          <span class="tag">Firewalls</span>
+          <span class="tag">VPN</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🐧</div>
+        <div class="skill-title">Systems</div>
+        <div class="skill-tags">
+          <span class="tag">Kali Linux</span>
+          <span class="tag">Ubuntu</span>
+          <span class="tag">Windows Server</span>
+          <span class="tag">VirtualBox</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">📊</div>
+        <div class="skill-title">Analysis</div>
+        <div class="skill-tags">
+          <span class="tag">Log Analysis</span>
+          <span class="tag">SIEM Basics</span>
+          <span class="tag">Business Analysis</span>
+          <span class="tag">Documentation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">02</div>
+      <h2 class="section-title">Projects</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="projects-list">
+      <div class="project-card">
+        <div>
+          <div class="project-name">🔍 Port Scanner — Python</div>
+          <div class="project-desc">A lightweight multithreaded TCP port scanner built from scratch. Supports range scanning, banner grabbing, and output logging.</div>
+          <div class="project-tech">
+            <span class="tag">Python</span>
+            <span class="tag">Sockets</span>
+            <span class="tag">Threading</span>
+            <span class="tag">Networking</span>
+          </div>
+        </div>
+        <span class="project-status status-done">COMPLETE</span>
+      </div>
+      <div class="project-card">
+        <div>
+          <div class="project-name">🏠 Home Lab — Kali + Metasploitable</div>
+          <div class="project-desc">VirtualBox-based isolated lab environment for safe penetration testing practice. Includes network configuration, snapshots, and full setup documentation.</div>
+          <div class="project-tech">
+            <span class="tag">VirtualBox</span>
+            <span class="tag">Kali Linux</span>
+            <span class="tag">Metasploitable</span>
+            <span class="tag">Networking</span>
+          </div>
+        </div>
+        <span class="project-status status-done">COMPLETE</span>
+      </div>
+      <div class="project-card wip">
+        <div>
+          <div class="project-name">📝 TryHackMe Write-ups</div>
+          <div class="project-desc">Detailed write-ups of completed rooms documenting methodology, tools used, and key learnings. Updated regularly as I complete new rooms.</div>
+          <div class="project-tech">
+            <span class="tag">Nmap</span>
+            <span class="tag">Metasploit</span>
+            <span class="tag">OSINT</span>
+            <span class="tag">Documentation</span>
+          </div>
+        </div>
+        <span class="project-status status-wip">IN PROGRESS</span>
+      </div>
+      <div class="project-card wip">
+        <div>
+          <div class="project-name">🛡️ Log Analyzer Script</div>
+          <div class="project-desc">Python script that parses system logs to detect suspicious patterns, failed logins, and potential intrusion indicators.</div>
+          <div class="project-tech">
+            <span class="tag">Python</span>
+            <span class="tag">Regex</span>
+            <span class="tag">Log Analysis</span>
+            <span class="tag">SIEM</span>
+          </div>
+        </div>
+        <span class="project-status status-wip">IN PROGRESS</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CERTS -->
+<section id="certs">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">03</div>
+      <h2 class="section-title">Certifications</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="certs-grid">
+      <div class="cert-card">
+        <div class="cert-icon">🎓</div>
+        <div class="cert-name">Google Cybersecurity Certificate</div>
+        <div class="cert-org">Google / Coursera</div>
+        <span class="cert-badge status-done" style="background:rgba(0,255,136,0.1);color:var(--green);border:1px solid var(--green);font-family:'Share Tech Mono',monospace;font-size:11px;padding:4px 14px;border-radius:20px;display:inline-block;">✅ COMPLETED</span>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">🔐</div>
+        <div class="cert-name">CompTIA Security+</div>
+        <div class="cert-org">CompTIA</div>
+        <span class="cert-badge cert-progress">STUDYING</span>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">🎯</div>
+        <div class="cert-name">Jr. Penetration Tester</div>
+        <div class="cert-org">TryHackMe</div>
+        <span class="cert-badge cert-progress">IN PROGRESS</span>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">💀</div>
+        <div class="cert-name">Certified Ethical Hacker</div>
+        <div class="cert-org">EC-Council</div>
+        <span class="cert-badge cert-planned">PLANNED 2026</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">04</div>
+      <h2 class="section-title">Experience</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="exp-list">
+      <div class="exp-item">
+        <div class="exp-date">PREVIOUS</div>
+        <div>
+          <div class="exp-company">Çelebi Holding</div>
+          <div class="exp-role">SOFTWARE DEVELOPMENT & SYSTEMS</div>
+          <div class="exp-desc">Worked within enterprise software environments, gaining hands-on experience with system workflows, cross-team technical communication, and large-scale infrastructure. This background provides a strong foundation for understanding how real-world systems operate — and how they can be secured.</div>
+        </div>
+      </div>
+      <div class="exp-item">
+        <div class="exp-date">PREVIOUS</div>
+        <div>
+          <div class="exp-company">SEN-PA</div>
+          <div class="exp-role">BUSINESS ANALYSIS & DEVELOPMENT</div>
+          <div class="exp-desc">Requirements gathering, process analysis, and software delivery pipelines. Developed a structured approach to understanding complex systems — a skill directly transferable to security assessments and threat modeling.</div>
+        </div>
+      </div>
+      <div class="exp-item">
+        <div class="exp-date">NOW</div>
+        <div>
+          <div class="exp-company">Self-Study & Labs</div>
+          <div class="exp-role">CYBERSECURITY — FULL TIME FOCUS</div>
+          <div class="exp-desc">Dedicated full-time to cybersecurity skill development. Daily TryHackMe labs, home lab environment, and structured study toward CompTIA Security+. Actively building a portfolio of real, documented work.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-box">
+      <div class="contact-title">Let's Connect</div>
+      <div class="contact-sub">
+        Actively looking for entry-level cybersecurity roles.<br>
+        Open to <strong>Canada 🇨🇦</strong>, <strong>Australia 🇦🇺</strong>, and remote positions.
+      </div>
+      <div class="contact-links">
+        <a href="https://linkedin.com/in/emir-gulcur" class="contact-link" target="_blank">
+          <span>💼</span> LinkedIn
+        </a>
+        <a href="https://github.com/emirgulcur" class="contact-link" target="_blank">
+          <span>🐙</span> GitHub
+        </a>
+        <a href="https://tryhackme.com/p/emir.gulcur22" class="contact-link" target="_blank">
+          <span>🎯</span> TryHackMe
+        </a>
+        <a href="mailto:emir.gulcur22@gmail.com" class="contact-link">
+          <span>📧</span> Email
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>© 2025 <span>Emir Gülçür</span> — Built with curiosity & caffeine. <span>// STAY CURIOUS, STAY ETHICAL</span></p>
+  </div>
+</footer>
+
+</body>
+</html>
